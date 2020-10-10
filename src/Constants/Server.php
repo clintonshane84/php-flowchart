@@ -16,7 +16,9 @@ class Server {
 		if (is_dir($dir) && is_readable($dir)) {
 			self::$serverPath = $dir;
 			return true;
+		} else {
+			self::$serverPath = dirname(__DIR__);
 		}
-		return false;
+		return true;
 	}
 }

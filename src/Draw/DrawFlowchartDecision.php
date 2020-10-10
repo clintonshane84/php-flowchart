@@ -11,20 +11,17 @@ class DrawFlowchartDecision implements IDrawFlowchart {
 	public function __construct()
 	{}
 	
-	public function draw()
+	public function draw($x, $y, $w = 140, $h = 0)
 	{
+		
 		$font = Server::getServerPath() . "/public/font/RobotoMono-Regular.ttf";
         // create diamond for decision
-		$values = array(
-            50, 0,  // Point 1 (x, y)
-            0, 50, // Point 2 (x, y)
-			50,100, // Point 3 (x, y)
-			100, 50, // Point 4 (x, y)
-			50, 0, // Point 5 (x, y)
-			0, 50, // Point 6 (x, y)
-        );
+
         // create image
-        $image = imagecreatetruecolor(100, 100);
+        $w = (!$w) ? 140 : $w;
+        $x2 = $w + $x
+        $y2 = $h + $y;
+        $image = imagecreatetruecolor($w, $w);
 
         // allocate colors
         $bg   = imagecolorallocate($image, 200, 200, 200);
@@ -32,16 +29,28 @@ class DrawFlowchartDecision implements IDrawFlowchart {
         $blk = imagecolorallocate($image, 1, 1, 1);
 
         // fill the background
-        imagefilledrectangle($image, 0, 0, 99, 99, $bg);
+        imagefilledrectangle($image, 0, 0, $w-1, $w-1, $bg);
 
-        // draw a polygon
+        // prepare local variables
+        $c = ($w/2);
+        $xc = $x + $c;
+		$values = array(
+            $xc,	$y,		// Point 1 (x, y)
+            $x,		$xc,	// Point 2 (x, y)
+			$xc,	$w,		// Point 3 (x, y)
+			$w, 	$xc,	// Point 4 (x, y)
+			$xc,	$y,		// Point 5 (x, y)
+			$x,		$xc,	// Point 6 (x, y)
+        );
+        
+        // draw a diamond and its outline
         imagefilledpolygon($image, $values, 6, $white);
-        imageline($image, 50, 0, 0, 50, $blk);
-        imageline($image, 50, 100, 100, 50, $blk);
-        imageline($image, 100, 50, 50, 0, $blk);
-        imageline($image, 0, 50, 50, 100, $blk);
+        imageline($image, $c, $y, $x, $c, $blk);
+        imageline($image, $c, $w, $w, $c, $blk);
+        imageline($image, $w, $c, $c, 0, $blk);
+        imageline($image, 0, $c, $c, $w, $blk);
         //RobotoMono-Regular.ttf
-        imagettftext($image, 12.00, 0.00, 50, 50, $blk, $font, "True/False?");
+        imagettftext($image, 8.00, 0.00, $c/2, $c, $blk, $font, "true/false?");
 
         // flush image
         header('Content-type: image/png');
